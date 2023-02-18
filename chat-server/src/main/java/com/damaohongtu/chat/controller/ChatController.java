@@ -19,8 +19,7 @@ public class ChatController {
     @GetMapping("/text")
     public BaseResponse queryGraph(@RequestParam String msg){
 
-        String responseMsg = chatService.chat(msg);
-        responseMsg.replaceAll("\r|\n", "");
+        String responseMsg = chatService.chat(msg).replaceAll("\r|\n", "").replace("\\n", "");;
         BaseResponse response = BaseResponse.builder()
                 .status(200)
                 .code("SUCCESS")
