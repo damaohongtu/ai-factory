@@ -24,7 +24,7 @@ module.exports = {
    * In most cases please use '/' !!!
    * Detail: https://cli.vuejs.org/config/#publicpath
    */
-  publicPath: '/',
+  publicPath: '/chat',
   outputDir: 'dist',
   assetsDir: 'static',
   lintOnSave: process.env.NODE_ENV === 'development',
@@ -34,9 +34,10 @@ module.exports = {
     port: port,
     open: true,
     proxy: {
-      '/api/chat': {
+      '/dev-api': {
         target: 'http://127.0.0.1:8080',
         changeOrigin: true,
+        pathRewrite: { '^/dev-api': '' },
         onProxyReq: function(proxyReq, req, res, options) {
           if (req.body) {
             const bodyData = JSON.stringify(req.body)
