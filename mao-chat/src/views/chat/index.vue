@@ -15,6 +15,7 @@
 
 <script>
 import { register } from 'vue-advanced-chat'
+import {chatGPT} from "@/api/chat";
 // import { register } from '../../vue-advanced-chat/dist/vue-advanced-chat.es.js'
 register()
 export default {
@@ -130,8 +131,14 @@ export default {
               preview: 'https://damaohongtu.com/upload/2022/12/image-1672232537618.png'
             }
           ]
-        }
+        },
+        this.chatWithOpenAI(message)
       ]
+    },
+    chatWithOpenAI(message) {
+      chatGPT(message).then(res => {
+        console.log(res)
+      })
     },
     addNewMessage() {
       setTimeout(() => {

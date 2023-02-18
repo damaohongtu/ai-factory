@@ -32,16 +32,7 @@ service.interceptors.request.use(
 
 // response interceptor
 service.interceptors.response.use(
-  /**
-   * If you want to get http information such as headers or status
-   * Please return  response => response
-  */
 
-  /**
-   * Determine the request status by custom code
-   * Here is just an example
-   * You can also judge the status by HTTP Status Code
-   */
   response => {
     const res = response.data
 
@@ -83,3 +74,66 @@ service.interceptors.response.use(
 )
 
 export default service
+
+const ChatRequest = axios.create({
+  baseURL: process.env.VUE_APP_BASE_API,
+  timeout: 80000, // 请求超时时间
+  withCredentials: true
+})
+
+// request拦截器
+ChatRequest.interceptors.request.use(
+  config => {
+    if (getToken()) {
+      config.headers['Authorization'] = getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
+    }
+    var lang = localStorage.getItem('lang')// 因为项目中使用到了i18n国际化语言配置，请根据实际情况自行修改
+    if (!lang) {
+      lang = 'zh_CN'
+    }
+    config.headers['Accept-Language'] = lang.replace(/_/g, '-')
+    config.headers['Content-Type'] = 'application/json'
+    return config
+  },
+  error => {
+    Promise.reject(error).then(r => console.log(r))
+  }
+)
+
+// response 拦截器
+ChatRequest.interceptors.response.use(
+  response => {
+    return response.data
+  },
+  error => {
+    // 兼容blob下载出错json提示
+    if (error.response.data instanceof Blob && error.response.data.type.toLowerCase().indexOf('json') !== -1) {
+      const reader = new FileReader()
+      reader.readAsText(error.response.data, 'utf-8')
+      reader.onload = function(e) {
+        const errorMsg = JSON.parse(reader.result).message
+        Notification.error({
+          title: errorMsg,
+          duration: 5000
+        })
+      }
+    } else {
+      let code = 0
+      try {
+        code = error.response.data.status
+      } catch (e) {
+        if (error.toString().indexOf('Error: timeout') !== -1) {
+          Notification.error({
+            title: '网络请求超时',
+            duration: 5000
+          })
+          return Promise.reject(error)
+        }
+      }
+      console.log(code)
+    }
+    return Promise.reject(error)
+  }
+)
+
+export { ChatRequest }
