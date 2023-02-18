@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
-mvn -f ../pom.xml clean -U package -DskipTests=true
-
 rm ./*.jar
 
-cp ../target/orderquery-demo-0.0.1.jar ./
+cp ./chat-server-0.0.1-SNAPSHOT ./
 
 docker build -f ./Dockerfile -t com.damaohongtu.chatserver:0.0.1 .
 
