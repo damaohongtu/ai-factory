@@ -20,6 +20,7 @@ public class ChatController {
     public BaseResponse queryGraph(@RequestParam String msg){
 
         String responseMsg = chatService.chat(msg);
+        responseMsg.replaceAll("\r|\n", "");
         BaseResponse response = BaseResponse.builder()
                 .status(200)
                 .code("SUCCESS")
