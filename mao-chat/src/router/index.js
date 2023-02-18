@@ -52,7 +52,7 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/',
+    path: '/chat',
     component: () => import('@/views/chat/index.vue'),
     name: 'FUN',
     meta: {
